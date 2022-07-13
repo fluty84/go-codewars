@@ -34,3 +34,17 @@ func Between(a, b int) []int {
 	}
 	return numbArr
 }
+
+// Given a non-empty array of integers, return the result of multiplying the values together in order.
+
+
+func Grow(arr []int) int{
+  
+  mult := 1
+  
+  for i := 0 ; i < len(arr) ; i++ {
+    mult = arr[i] * mult
+  }
+  
+  return mult
+}
