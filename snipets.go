@@ -37,14 +37,29 @@ func Between(a, b int) []int {
 
 // Given a non-empty array of integers, return the result of multiplying the values together in order.
 
+func Grow(arr []int) int {
 
-func Grow(arr []int) int{
-  
-  mult := 1
-  
-  for i := 0 ; i < len(arr) ; i++ {
-    mult = arr[i] * mult
-  }
-  
-  return mult
+	mult := 1
+
+	for i := 0; i < len(arr); i++ {
+		mult = arr[i] * mult
+	}
+
+	return mult
+}
+
+//Consider an array/list of sheep where some sheep may be missing from their place.
+// We need a function that counts the number of sheep present in the array (true means present).
+
+func CountSheeps(numbers []bool) int {
+
+	sheeps := 0
+
+	for _, sheep := range numbers {
+		if sheep == true {
+			sheeps = sheeps + 1
+		}
+	}
+
+	return sheeps
 }
