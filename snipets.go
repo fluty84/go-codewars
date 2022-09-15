@@ -63,3 +63,18 @@ func CountSheeps(numbers []bool) int {
 
 	return sheeps
 }
+
+Complete the square sum function so that it squares each number passed into it and then sums the results together.
+
+package kata
+import "fmt"
+
+func SquareSum(numbers []int) int {
+    // your code here
+  sum:=0
+  for i:=0; i < len(numbers); i++{
+    fmt.Println(numbers[i])
+    sum += numbers[i]*numbers[i]
+  }
+  return sum
+}
