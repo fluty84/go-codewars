@@ -159,12 +159,17 @@ package main
 import "fmt"
 
 
-func FibonacciRecursion(n int) int {
-    if n <= 1 {
-        return n
-    }
-    return FibonacciRecursion(n-1) + FibonacciRecursion(n-2)
+func fibonacci() func(int) int {	
+	
+	solution := 0
+	
+	return func(x int) int {
+	  solution = FibonacciRecursion(x)
+	  
+	  return solution
+	}
 }
+
 
 // fibonacci is a function that returns
 // a function that returns an int.
