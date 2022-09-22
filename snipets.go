@@ -292,3 +292,133 @@ func main() {
 	io.Copy(os.Stdout, &r)
 }
 
+Exercise: Images
+Remember the picture generator you wrote earlier? Let's write another one, but this time it will return an implementation of image.Image instead of a slice of data.
+
+Define your own Image type, implement the necessary methods, and call pic.ShowImage.
+
+Bounds should return a image.Rectangle, like image.Rect(0, 0, w, h).
+
+ColorModel should return color.RGBAModel.
+
+At should return a color; the value v in the last picture generator corresponds to color.RGBA{v, v, 255, 255} in this one.
+
+package main
+
+import (
+	"golang.org/x/tour/pic"
+	"image"
+	"image/color"
+	)
+
+type Image struct{
+	Width, Height int
+	r, g, b, a uint8
+}
+
+func (img Image) Bounds() image.Rectangle {
+	return image.Rect(0,0,img.Width,img.Height)
+}
+
+func (img Image) ColorModel() color.Model {
+	return color.RGBAModel
+}
+
+func (img Image) At(x, y int) color.Color {
+	return color.RGBA{img.r, img.g, img.b, img.a}
+}
+
+func main() {
+	m := Image{220,340,60,144,150,200}
+	pic.ShowImage(m)
+}
+
+Exercise: Equivalent Binary Trees
+1. Implement the Walk function.
+
+2. Test the Walk function.
+
+The function tree.New(k) constructs a randomly-structured (but always sorted) binary tree holding the values k, 2k, 3k, ..., 10k.
+
+Create a new channel ch and kick off the walker:
+
+go Walk(tree.New(1), ch)
+Then read and print 10 values from the channel. It should be the numbers 1, 2, 3, ..., 10.
+
+3. Implement the Same function using Walk to determine whether t1 and t2 store the same values.
+
+4. Test the Same function.
+
+Same(tree.New(1), tree.New(1)) should return true, and Same(tree.New(1), tree.New(2)) should return false.
+
+The documentation for Tree can be found here.
+
+package main
+
+import (
+	"golang.org/x/tour/tree"
+	"fmt"
+	)
+
+// Walk walks the tree t sending all values
+// from the tree to the channel ch.
+func Walk(t *tree.Tree, ch chan int){
+	
+	var walker func (t * tree.Tree) // creo variable walker que es de tipo funcion 
+	//fmt.Printf("t es ahora %v \n", t) 
+	walker = func (t *tree.Tree) {  // inicio la variable con el contenido de la función 
+		
+		
+        if (t == nil) { // mientras t tenga valor, el programa va a seguir ejecutándose
+            return
+        }
+        walker(t.Left) // busca valores recursivamente hacia la izquierda, si no los hay sale de la función
+        ch <- t.Value // devuelve al canal el valor de su iteracion recursiva
+        walker(t.Right) // idem que left pero a la derecha
+    }
+    walker(t)
+  	close(ch)
+}
+
+// Same determines whether the trees
+// t1 and t2 contain the same values.
+func Same(t1, t2 *tree.Tree) bool {
+	
+	chT1 := make(chan int)
+	chT2 := make(chan int)
+	
+	go Walk(t1, chT1)
+	go Walk(t2, chT2)
+	
+	for {
+		chT1response, okT1 := <- chT1 // almaceno la respuesta y la señal de canal activo
+		//fmt.Println(chT1response, okT1)
+		chT2response, okT2 := <- chT2
+		
+		if chT1response != chT2response  { // comparo si las respuestas van siendo las mismas, si alguna no lo es devuelvo false
+            return false
+        }
+
+        if !okT1 || !okT2 { //si se cierra un canal salgo del bucle
+            break
+        }
+	}
+	
+	return true // si no se ha salido de la funcion con un false, devuelvo true
+}
+
+func main() {
+
+ ch := make(chan int)
+
+ go Walk(tree.New(1), ch)
+ 
+ fmt.Println("are trees equal?", Same(tree.New(1), tree.New(1)))
+ 
+ for recived := range ch {
+ 	fmt.Println(recived)
+ }
+
+}
+
+
